@@ -1,0 +1,66 @@
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(express.json());
+
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB Connection Error:", err));
+
+// Movie Schema & Model
+const MovieSchema = new mongoose.Schema({
+  Budget: String,
+  Home_Page: String,
+  Movie_Name: String,
+  Genres: [String],
+  Overview: String,
+  Cast: [String],
+  Original_Language: [String],
+  Storyline: String,
+  Production_Company: [String],
+  Release_Date: [String],
+  Revenue: String,
+  Run_Time: [String],
+  Tagline: String,
+  Vote_Average: Number,
+  Vote_Count: String,
+});
+
+const Movie = mongoose.model("Movie", MovieSchema);
+
+// Routes
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
+
+app.post("/movies", async (req, res) => {
+  try {
+    const newMovie = new Movie(req.body);
+    await newMovie.save();
+    res.status(201).json(newMovie);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/movies", async (req, res) => {
+  try {
+    const movies = await Movie.find();
+    res.json(movies);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Start Server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
