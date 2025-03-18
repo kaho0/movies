@@ -47,7 +47,7 @@ const MovieDatabase = () => {
       try {
         setLoading(true);
 
-        const response = await fetch("http://localhost:5000/movies");
+        const response = await fetch("https://cinemagic-f3fn.onrender.com");
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
